@@ -27,6 +27,9 @@
         <p class="description">
           我是一个智能助手，你可以和我聊天，探索知识，或者获取帮助。
         </p>
+        <div class="input-container">
+          <chat-input :loading="isLoading" @send="handleSend" @stop="handleStop"/>
+        </div>
         <!-- <router-link to="/chat" class="start-button">
           <span class="mirror-text">开始对话</span>
           <div class="liquid"></div>
@@ -240,7 +243,7 @@ onUnmounted(() => {
 }
 
 .search-dialog-container {
-  background-color: rgba(202, 33, 33, 0.4);
+  // background-color: rgba(202, 33, 33, 0.4);
   margin-top: 15vh;
   width: 640px;
   height: fit-content;

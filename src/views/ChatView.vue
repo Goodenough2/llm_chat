@@ -433,18 +433,28 @@ const handleBack = async () => {
 
 /* 添加输入框容器样式 */
 .chat-input-container {
-  position: sticky; /* 使用粘性定位，当滚动到底部时固定位置 */
-  bottom: 0; /* 固定在底部 */
-  left: 0; /* 左边缘对齐 */
-  right: 0; /* 右边缘对齐 */
-  background-color: var(--bg-color); /* 使用主题变量设置背景色 */
-  z-index: 10; /* 设置层级，确保输入框始终显示在其他内容之上 */
-  padding: 0.6rem; /* 添加内边距，让输入框与边缘保持距离 */
+  position: sticky;
+  /* 使用粘性定位，当滚动到底部时固定位置 */
+  bottom: 1rem;
+  /* 固定在底部 */
+  left: 0;
+  /* 左边缘对齐 */
+  right: 0;
+  /* 右边缘对齐 */
+  background-color: var(--bg-color);
+  /* 使用主题变量设置背景色 */
+  z-index: 10;
+  /* 设置层级，确保输入框始终显示在其他内容之上 */
+  padding: 0.6rem;
+  /* 添加内边距，让输入框与边缘保持距离 */
   // padding-top: 0; /* 移除顶部内边距，只保留底部和左右的间距 */
 
   /* 添加最大宽度和居中对齐 */
-  max-width: 796px; /* 设置最大宽度 */
-  margin: 0 auto; /* 水平居中 */
-  width: 100%; /* 在最大宽度范围内占满宽度 */
+  max-width: 796px;
+  /* 设置最大宽度 */
+  margin: 0 auto;
+  /* 水平居中 */
+  width: 100%;
+  /* 在最大宽度范围内占满宽度 */
 }
 </style>
