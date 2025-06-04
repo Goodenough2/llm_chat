@@ -2,7 +2,7 @@
   <div class="home-page">
     <header class="header">
       <div class="header-left">
-        <span class="logo-text">LLM Chat</span>
+        <span class="logo-text">ChatBot</span>
       </div>
       <div class="header-right">
         <div class="search-container" @click="handleSearchClick">
@@ -14,7 +14,7 @@
             <div class="shortcut-key">⌘ K</div>
           </div>
         </div>
-        <a href="https://github.com/Solomon-He/LLM-chat" target="_blank" class="github-link">
+        <a href="https://github.com/Goodenough2/llm_chat" target="_blank" class="github-link">
           <img src="@/assets/photo/github.png" alt="GitHub" class="github-icon" />
         </a>
       </div>
@@ -23,37 +23,14 @@
     <!-- 添加主体内容 -->
     <main class="main-content">
       <div class="hero-section">
-        <h1 class="title">欢迎使用 LLM Chat</h1>
-        <p class="description">一个强大的 AI 聊天助手，基于大语言模型，为您提供智能对话体验</p>
-        <div class="features">
-          <div class="feature-item">
-            <el-icon class="feature-icon">
-              <ChatLineRound />
-            </el-icon>
-            <h3>智能对话</h3>
-            <p>自然流畅的对话体验，理解上下文</p>
-          </div>
-          <div class="feature-item">
-            <el-icon class="feature-icon">
-              <Document />
-            </el-icon>
-            <h3>文件支持</h3>
-            <p>支持多种格式文件上传，增强信息输入</p>
-            <p class="note">注意：由于接口限制，后台无法读取到文件内容</p>
-          </div>
-          <div class="feature-item">
-            <el-icon class="feature-icon">
-              <Setting />
-            </el-icon>
-            <h3>个性化设置</h3>
-            <p>可自定义的对话参数，满足不同场景需求</p>
-            <p class="note" style="color: #3f7af1">支持 deepseek_r1 模型</p>
-          </div>
-        </div>
-        <router-link to="/chat" class="start-button">
+        <h3 class="title">有什么可以帮忙的？</h3>
+        <p class="description">
+          我是一个智能助手，你可以和我聊天，探索知识，或者获取帮助。
+        </p>
+        <!-- <router-link to="/chat" class="start-button">
           <span class="mirror-text">开始对话</span>
           <div class="liquid"></div>
-        </router-link>
+        </router-link> -->
       </div>
     </main>
 
@@ -65,13 +42,14 @@
         </div>
       </div>
     </Transition>
+    
   </div>
 </template>
 
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Search, ChatLineRound, Document, Setting } from '@element-plus/icons-vue'
+import { Search} from '@element-plus/icons-vue'
 import SearchDialog from '@/components/SearchDialog.vue'
 
 const searchText = ref('')
@@ -82,25 +60,21 @@ const handleSearchClick = () => {
   showSearchDialog.value = true
 }
 
-// 添加点击遮罩层关闭对话框的处理
-const handleOverlayClick = (event) => {
-  // 只有当点击的是遮罩层本身时才关闭对话框
-  if (event.target.classList.contains('search-dialog-overlay')) {
-    showSearchDialog.value = false
-  }
+const handleOverlayClick = () => {
+  showSearchDialog.value = false
 }
 
-// 处理点击外部关闭对话框
-const handleClickOutside = (event) => {
-  const searchDialog = document.querySelector('.search-dialog')
-  if (
-    searchDialog &&
-    !searchDialog.contains(event.target) &&
-    !event.target.closest('.search-container')
-  ) {
-    showSearchDialog.value = false
-  }
-}
+// const handleClickOutside = (event) => {
+//   // const searchDialog = document.querySelector('.search-dialog')
+//   // console.log(searchDialog)
+//   // if (
+//   //   searchDialog &&
+//   //   !searchDialog.contains(event.target) &&
+//   //   !event.target.closest('.search-container')
+//   // ) {
+//   //   showSearchDialog.value = false
+//   // }
+// }
 
 // 处理快捷键
 const handleKeydown = (event) => {
@@ -116,12 +90,12 @@ const handleKeydown = (event) => {
 }
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
+  // document.addEventListener('click', handleClickOutside)
   document.addEventListener('keydown', handleKeydown)
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
+  // document.removeEventListener('click', handleClickOutside)
   document.removeEventListener('keydown', handleKeydown)
 })
 </script>
@@ -143,13 +117,11 @@ onUnmounted(() => {
   background-color: var(--el-bg-color); // 头部背景色
 
   .header-left {
-    flex-shrink: 0; // 防止logo被压缩
+
     .logo-text {
       font-size: 20px;
       font-weight: 600;
       color: #171717;
-      cursor: pointer;
-      user-select: none;
       white-space: nowrap; // 防止文字换行
     }
   }
@@ -170,8 +142,6 @@ onUnmounted(() => {
       .search-input {
         display: flex; // 搜索框内部使用弹性布局
         align-items: center; // 搜索框内部元素垂直居中
-        // max-width: 240px; // 搜索框最小宽度
-        // min-width: 100px; // 搜索框最大宽度
 
         width: 100%; // 搜索框宽度填充容器
         height: 32px; // 搜索框固定高度
@@ -236,9 +206,12 @@ onUnmounted(() => {
 
   .hero-section {
     text-align: center;
-
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
     .title {
-      font-size: 48px;
+      font-size: 36px;
       font-weight: 700;
       color: #1a1a1a;
       margin-bottom: 24px;
@@ -251,181 +224,6 @@ onUnmounted(() => {
       margin: 0 auto 64px;
       line-height: 1.5;
     }
-
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 40px;
-      margin-bottom: 64px;
-
-      .feature-item {
-        padding: 32px;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease;
-
-        &:hover {
-          transform: translateY(-4px);
-        }
-
-        .feature-icon {
-          font-size: 32px;
-          color: var(--el-color-primary);
-          margin-bottom: 20px;
-        }
-
-        h3 {
-          font-size: 20px;
-          font-weight: 600;
-          color: #1a1a1a;
-          margin-bottom: 12px;
-        }
-
-        p {
-          font-size: 16px;
-          color: #666;
-          line-height: 1.5;
-        }
-
-        .note {
-          font-size: 12px;
-          color: #999;
-          margin-top: 8px;
-          font-style: italic;
-        }
-      }
-    }
-
-    .start-button {
-      position: relative;
-      display: inline-block;
-      padding: 20px 40px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #fff;
-      background: var(--el-color-primary);
-      border-radius: 12px;
-      text-decoration: none;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 6px 30px -10px var(--el-color-primary);
-
-      // 方案3: 镜面文字
-      .mirror-text {
-        position: relative;
-        z-index: 1;
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 700;
-        text-transform: uppercase;
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 1) 0%,
-          rgba(255, 255, 255, 0.8) 50%,
-          rgba(255, 255, 255, 0.6) 100%
-        );
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
-      }
-
-      // 发光效果
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: 0.5s ease;
-      }
-
-      // 液体效果
-      .liquid {
-        position: absolute;
-        top: -80px;
-        left: 0;
-        width: 200px;
-        height: 200px;
-        background: var(--el-color-primary-light-3);
-        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
-        transition: 0.5s;
-
-        &::before,
-        &::after {
-          content: '';
-          position: absolute;
-          width: 200%;
-          height: 200%;
-          top: 0;
-          left: 50%;
-          transform: translate(-50%, -75%);
-          background: #fff;
-        }
-
-        &::before {
-          border-radius: 45%;
-          animation: animate 5s linear infinite;
-        }
-
-        &::after {
-          border-radius: 40%;
-          animation: animate 10s linear infinite;
-        }
-      }
-
-      span {
-        position: relative;
-        z-index: 1;
-      }
-
-      // 悬停效果
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 40px -10px var(--el-color-primary);
-
-        &::before {
-          left: 100%;
-        }
-
-        .liquid {
-          top: -120px;
-        }
-
-        .mirror-text {
-          background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 1) 0%,
-            rgba(255, 255, 255, 0.9) 50%,
-            rgba(255, 255, 255, 0.7) 100%
-          );
-          background-clip: text;
-          -webkit-background-clip: text;
-          color: transparent;
-          -webkit-text-fill-color: transparent;
-        }
-      }
-
-      // 点击效果
-      &:active {
-        transform: scale(0.98) translateY(0);
-        box-shadow: 0 5px 20px -10px var(--el-color-primary);
-      }
-    }
-
-    // 液体动画
-    @keyframes animate {
-      0% {
-        transform: translate(-50%, -75%) rotate(0deg);
-      }
-      100% {
-        transform: translate(-50%, -75%) rotate(360deg);
-      }
-    }
   }
 }
 
@@ -435,25 +233,17 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
+  background-color: rgba(0, 0, 0, 0.4);
   justify-content: center;
   z-index: 1000;
 }
 
 .search-dialog-container {
+  background-color: rgba(202, 33, 33, 0.4);
   margin-top: 15vh;
   width: 640px;
+  height: fit-content;
 }
 
-// 过渡动画
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
 </style>
