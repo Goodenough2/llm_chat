@@ -3,6 +3,8 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { useChatStore } from '@/stores/chat'
 import DialogEdit from '@/components/DialogEdit.vue'
+import { useRouter } from 'vue-router'
+const route = useRouter()
 
 const isVisible = ref(false)
 const chatStore = useChatStore()
@@ -41,6 +43,7 @@ const handleNewChat = () => {
 const handleSwitchChat = (conversationId) => {
   chatStore.switchConversation(conversationId)
   isVisible.value = false
+  route.push({ path: `/chat/${conversationId}` });
 }
 
 // 格式化标题

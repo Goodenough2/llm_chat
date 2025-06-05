@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+// import {useRouter} from 'vue-router'
 import { Close, Document } from '@element-plus/icons-vue'
 
 // 输入框的值，使用 ref 实现响应式
@@ -16,6 +17,7 @@ const props = defineProps({
 
 // 定义组件的事件，这里声明了一个 send 事件
 const emit = defineEmits(['send', 'stop'])
+// const router = useRouter()
 
 // 处理发送消息的方法
 const handleSend = () => {

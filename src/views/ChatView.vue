@@ -14,9 +14,11 @@ import { useRouter } from 'vue-router'
 
 // 获取聊天消息
 const chatStore = useChatStore()
+const route = useRouter();
 const currentMessages = computed(() => chatStore.currentMessages)
 const isLoading = computed(() => chatStore.isLoading)
 const settingStore = useSettingStore()
+
 
 // 获取消息容器
 const messagesContainer = ref(null)
@@ -36,14 +38,22 @@ onMounted(() => {
   nextTick(() => {
     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
   })
+
   // 当没有对话时，默认新建一个对话
-  if (chatStore.conversations.length === 0) {
-    chatStore.createConversation()
-  }
+  // if (chatStore.conversations.length === 0) {
+  //   chatStore.createConversation()
+  // }
 })
 
 // 发送消息
 const handleSend = async (messageContent) => {
+  // console.log(route.params)
+  // if(!route.params) {
+  //   const chatId = Date.now().toString(); // 生成对话ID
+  //   chatStore.createConversation(chatId); // 创建新的对话
+  //   await route.push({ path: `/chat/${chatId}` });
+  // }
+  
   try {
     // 添加用户消息
     chatStore.addMessage(
@@ -115,6 +125,8 @@ const popupMenu = ref(null)
 // 添加新建对话的处理函数
 const handleNewChat = () => {
   chatStore.createConversation()
+  // route.push({path: '/chat'})
+  
 }
 
 // 获取当前对话标题
@@ -127,12 +139,10 @@ const formatTitle = (title) => {
 // 添加对话框组件
 const dialogEdit = ref(null)
 
-// 获取路由实例
-const router = useRouter()
 
 // 处理返回首页
 const handleBack = async () => {
-  router.push('/')
+  route.push('/')
 }
 </script>
 
@@ -172,7 +182,14 @@ const handleBack = async () => {
 
     <!-- 消息容器，显示对话消息 -->
     <div class="messages-container" ref="messagesContainer">
-      <template v-if="currentMessages.length > 0">
+      <div v-if="currentMessages.length == 0" class="empty-state">
+        <div class="empty-content">
+          <img src="@/assets/photo/对话.png" alt="chat" class="empty-icon" />
+          <h2>开始对话吧</h2>
+          <p>有什么想和我聊的吗？</p>
+        </div>
+      </div>
+      <template v-else>
         <chat-message
           v-for="(message, index) in currentMessages"
           :key="message.id"
@@ -183,13 +200,6 @@ const handleBack = async () => {
           @regenerate="handleRegenerate"
         />
       </template>
-      <div v-else class="empty-state">
-        <div class="empty-content">
-          <img src="@/assets/photo/对话.png" alt="chat" class="empty-icon" />
-          <h2>开始对话吧</h2>
-          <p>有什么想和我聊的吗？</p>
-        </div>
-      </div>
     </div>
 
     <!-- 聊天输入框 -->

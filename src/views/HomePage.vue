@@ -28,7 +28,7 @@
           我是一个智能助手，你可以和我聊天，探索知识，或者获取帮助。
         </p>
         <div class="input-container">
-          <chat-input :loading="isLoading" @send="handleSend" @stop="handleStop"/>
+          <chat-input @send="handleTalk"/>
         </div>
         <!-- <router-link to="/chat" class="start-button">
           <span class="mirror-text">开始对话</span>
@@ -52,11 +52,15 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router';
 import { Search} from '@element-plus/icons-vue'
 import SearchDialog from '@/components/SearchDialog.vue'
+import { useChatStore } from '@/stores/chat'
 
 const searchText = ref('')
+const chatStore = useChatStore()
 const showSearchDialog = ref(false)
+const router = useRouter();
 
 // 处理搜索框点击
 const handleSearchClick = () => {
@@ -90,6 +94,14 @@ const handleKeydown = (event) => {
     event.preventDefault()
     showSearchDialog.value = true
   }
+}
+
+const handleTalk = function() {
+  console.log('handleTalk')
+  const chatId = Date.now().toString(); // 生成对话ID
+  chatStore.createConversation(chatId); // 创建新的对话
+  router.push({ path: `/chat/${chatId}` });
+
 }
 
 onMounted(() => {
