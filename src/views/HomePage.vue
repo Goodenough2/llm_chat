@@ -30,10 +30,6 @@
         <div class="input-container">
           <chat-input @send="handleTalk"/>
         </div>
-        <!-- <router-link to="/chat" class="start-button">
-          <span class="mirror-text">开始对话</span>
-          <div class="liquid"></div>
-        </router-link> -->
       </div>
     </main>
 
@@ -56,11 +52,15 @@ import { useRouter } from 'vue-router';
 import { Search} from '@element-plus/icons-vue'
 import SearchDialog from '@/components/SearchDialog.vue'
 import { useChatStore } from '@/stores/chat'
+import { messageHandler } from '@/utils/messageHandler';
+import { createChatCompletion } from '@/utils/api'
+import { useSettingStore } from '@/stores/setting'
 
 const searchText = ref('')
 const chatStore = useChatStore()
 const showSearchDialog = ref(false)
 const router = useRouter();
+const settingStore = useSettingStore()
 
 // 处理搜索框点击
 const handleSearchClick = () => {
@@ -70,18 +70,6 @@ const handleSearchClick = () => {
 const handleOverlayClick = () => {
   showSearchDialog.value = false
 }
-
-// const handleClickOutside = (event) => {
-//   // const searchDialog = document.querySelector('.search-dialog')
-//   // console.log(searchDialog)
-//   // if (
-//   //   searchDialog &&
-//   //   !searchDialog.contains(event.target) &&
-//   //   !event.target.closest('.search-container')
-//   // ) {
-//   //   showSearchDialog.value = false
-//   // }
-// }
 
 // 处理快捷键
 const handleKeydown = (event) => {
@@ -96,21 +84,53 @@ const handleKeydown = (event) => {
   }
 }
 
-const handleTalk = function() {
-  console.log('handleTalk')
-  const chatId = Date.now().toString(); // 生成对话ID
-  chatStore.createConversation(chatId); // 创建新的对话
-  router.push({ path: `/chat/${chatId}` });
+const handleTalk = async function(messageContent) {
+  let chatId = Date.now().toString(); // 创建新 ID
+  chatStore.createConversation(chatId); // 注册对话
+  chatStore.switchConversation(chatId);
+  await router.push({ path: `/chat/${chatId}` });
+
+  try {
+    // 添加用户消息
+    chatStore.addMessage(
+      messageHandler.formatMessage('user', messageContent.text, '', messageContent.files),
+    )
+    // 添加空的助手消息
+    chatStore.addMessage(messageHandler.formatMessage('assistant', '', ''))
+
+    // 设置loading状态
+    chatStore.setIsLoading(true)
+    const lastMessage = chatStore.getLastMessage()
+    lastMessage.loading = true
+
+    // 调用API获取回复
+    const messages = chatStore.currentMessages.map(({ role, content }) => ({ role, content }))
+    const response = await createChatCompletion(messages)
+    // 使用封装的响应处理函数
+    await messageHandler.handleResponse(
+      response,
+      settingStore.settings.stream,
+      (content, reasoning_content, tokens, speed) => {
+        chatStore.updateLastMessage(content, reasoning_content, tokens, speed)
+      },
+    )
+    } catch (error) {
+      console.error('Failed to send message:', error)
+      chatStore.updateLastMessage('抱歉，发生了一些错误，请稍后重试。')
+    } finally {
+      // 重置loading状态
+      chatStore.setIsLoading(false)
+      const lastMessage = chatStore.getLastMessage()
+      lastMessage.loading = false
+    }
 
 }
 
 onMounted(() => {
-  // document.addEventListener('click', handleClickOutside)
   document.addEventListener('keydown', handleKeydown)
 })
 
 onUnmounted(() => {
-  // document.removeEventListener('click', handleClickOutside)
   document.removeEventListener('keydown', handleKeydown)
 })
 </script>

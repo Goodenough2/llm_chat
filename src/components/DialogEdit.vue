@@ -3,6 +3,8 @@ import { ref } from 'vue'
 // import { ElMessage } from 'element-plus'
 import { useChatStore } from '@/stores/chat'
 import { WarningFilled } from '@element-plus/icons-vue'
+import {useRouter} from 'vue-router'
+const router = useRouter()
 
 const chatStore = useChatStore()
 const dialogVisible = ref(false)
@@ -24,7 +26,7 @@ const openDialog = (conversationId, type = 'edit') => {
 }
 
 // 确认操作
-const handleConfirm = () => {
+const handleConfirm = async () => {
   if (dialogType.value === 'edit') {
     if (!inputTitle.value.trim()) {
       // ElMessage.warning('标题不能为空')
@@ -33,11 +35,15 @@ const handleConfirm = () => {
     chatStore.updateConversationTitle(currentConversationId.value, inputTitle.value.trim())
     // ElMessage.success('修改成功')
   } else {
-    chatStore.deleteConversation(currentConversationId.value)
+    await chatStore.deleteConversation(currentConversationId.value)
+    if (chatStore.conversations.length === 0) {
+      router.push('/')
+    }
     // ElMessage.success('删除成功')
   }
   dialogVisible.value = false
   inputTitle.value = ''
+  
 }
 
 // 取消操作

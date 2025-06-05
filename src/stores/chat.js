@@ -1,21 +1,36 @@
-import { ref, computed } from 'vue'
+// conversations: 所有对话列表，每个对话包含 id、title、messages 和 createdAt。
+// currentConversationId: 当前选中的对话 ID。
+// currentConversation: 当前选中的对话。
+// currentMessages: 当前对话的消息列表。
+// isLoading: 加载状态。
+// createConversation: 创建新对话。
+// switchConversation: 切换对话。
+// addMessage: 添加消息到当前对话。
+// setIsLoading: 设置加载状态。
+// updateLastMessage: 更新最后一条消息的内容。
+// getLastMessage: 获取当前对话的最后一条消息。
+// updateConversationTitle: 更新对话标题。
+// deleteConversation: 删除对话。
+
+import { ref, computed} from 'vue'
 import { defineStore } from 'pinia'
+
 
 export const useChatStore = defineStore(
   'llm-chat',
   () => {
     // 所有对话列表
     const conversations = ref([
-      {
-        id: '1',
-        title: '日常问候',
-        messages: [],
-        createdAt: Date.now(),
-      },
+      // {
+      //   id: '1',
+      //   title: '日常问候',
+      //   messages: [],
+      //   createdAt: Date.now(),
+      // },
     ])
 
     // 当前选中的对话 ID
-    const currentConversationId = ref('1')
+    const currentConversationId = ref(null)
 
     // 加载状态
     const isLoading = ref(false)
@@ -29,10 +44,10 @@ export const useChatStore = defineStore(
     const currentMessages = computed(() => currentConversation.value?.messages || [])
 
     // 创建新对话
-    const createConversation = () => {
+    const createConversation = (conversationId) => {
       const newConversation = {
-        id: Date.now().toString(),
-        title: '日常问候2222',
+        id: conversationId,
+        title: '日常问候',
         messages: [],
         createdAt: Date.now(),
       }
@@ -87,17 +102,14 @@ export const useChatStore = defineStore(
     }
 
     // 删除对话
-    const deleteConversation = (conversationId) => {
+    const deleteConversation = async (conversationId) => {
+      console.log(conversations.value)
       const index = conversations.value.findIndex((c) => c.id === conversationId)
+      
       if (index !== -1) {
         conversations.value.splice(index, 1)
-
-        // 如果删除后没有对话了，创建一个新对话
-        if (conversations.value.length === 0) {
-          createConversation()
-        }
         // 如果删除的是当前对话，切换到第一个对话
-        else if (conversationId === currentConversationId.value) {
+        if (conversationId === currentConversationId.value) {
           currentConversationId.value = conversations.value[0].id
         }
       }

@@ -14,7 +14,7 @@ import { useRouter } from 'vue-router'
 
 // 获取聊天消息
 const chatStore = useChatStore()
-const route = useRouter();
+const router = useRouter();
 const currentMessages = computed(() => chatStore.currentMessages)
 const isLoading = computed(() => chatStore.isLoading)
 const settingStore = useSettingStore()
@@ -31,29 +31,34 @@ watch(
     })
   },
   { deep: true },
+  ()=>{
+    if(chatStore.conversations.length === 0){
+      router.push({path: '/'})
+    }
+  }
+
 )
 
 onMounted(() => {
+  
   // 每次页面刷新时，将消息容器滚动到底部
   nextTick(() => {
     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
   })
-
-  // 当没有对话时，默认新建一个对话
-  // if (chatStore.conversations.length === 0) {
-  //   chatStore.createConversation()
-  // }
+  
 })
 
 // 发送消息
 const handleSend = async (messageContent) => {
-  // console.log(route.params)
-  // if(!route.params) {
-  //   const chatId = Date.now().toString(); // 生成对话ID
-  //   chatStore.createConversation(chatId); // 创建新的对话
-  //   await route.push({ path: `/chat/${chatId}` });
-  // }
-  
+  let chatId = chatStore.currentConversationId;
+
+  // 如果是首次发送，没有 chatId，则创建新对话并跳转
+  if (!chatId) {
+    chatId = Date.now().toString(); // 创建新 ID
+    chatStore.createConversation(chatId); // 注册对话
+    await router.push({ path: `/chat/${chatId}` });
+  }
+   
   try {
     // 添加用户消息
     chatStore.addMessage(
@@ -124,9 +129,8 @@ const popupMenu = ref(null)
 
 // 添加新建对话的处理函数
 const handleNewChat = () => {
-  chatStore.createConversation()
-  // route.push({path: '/chat'})
-  
+  chatStore.currentConversationId = null;
+  router.push({path: '/chat'})
 }
 
 // 获取当前对话标题
@@ -142,7 +146,9 @@ const dialogEdit = ref(null)
 
 // 处理返回首页
 const handleBack = async () => {
-  route.push('/')
+  chatStore.switchConversation(null)
+  await nextTick();
+  router.push('/')
 }
 </script>
 
