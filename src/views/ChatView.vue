@@ -63,17 +63,23 @@ const handleSend = async (messageContent) => {
     // 添加用户消息
     chatStore.addMessage(
       messageHandler.formatMessage('user', messageContent.text, '', messageContent.files),
+      
     )
     // 添加空的助手消息
-    chatStore.addMessage(messageHandler.formatMessage('assistant', '', ''))
+    chatStore.addMessage(messageHandler.formatMessage('assistant', '', '')
+    )
 
     // 设置loading状态
     chatStore.setIsLoading(true)
     const lastMessage = chatStore.getLastMessage()
-    lastMessage.loading = true
+    if (lastMessage) {
+        lastMessage.loading = true
+      }
 
     // 调用API获取回复
     const messages = chatStore.currentMessages.map(({ role, content }) => ({ role, content }))
+    // const messages = chatStore.conversations.find(c => c.id === chatId)?.messages.map(
+    //   ({ role, content }) => ({ role, content }) )|| [];
     const response = await createChatCompletion(messages)
     // 使用封装的响应处理函数
     await messageHandler.handleResponse(
@@ -90,7 +96,9 @@ const handleSend = async (messageContent) => {
       // 重置loading状态
       chatStore.setIsLoading(false)
       const lastMessage = chatStore.getLastMessage()
-      lastMessage.loading = false
+      if (lastMessage) {
+        lastMessage.loading = false
+      }
     }
   
 }

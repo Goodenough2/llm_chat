@@ -32,6 +32,24 @@ export const useChatStore = defineStore(
     // 当前选中的对话 ID
     const currentConversationId = ref(null)
 
+    // const STORAGE_KEY = 'llm-chat-conversations'
+
+    // const loadConversations = async () => {
+    //   // 从本地存储加载对话
+    //   const storedConversations = localStorage.getItem(STORAGE_KEY )
+    //   if (storedConversations) {
+    //     conversations.value = JSON.parse(storedConversations)
+    //   }
+    // }
+    // const saveConversations = async () => {
+    //   // 将对话保存到本地存储
+    //   localStorage.setItem(STORAGE_KEY , JSON.stringify(conversations.value))
+    // }
+
+    // // 初始化时加载对话
+    // loadConversations()
+
+
     // 加载状态
     const isLoading = ref(false)
 
@@ -53,6 +71,7 @@ export const useChatStore = defineStore(
       }
       conversations.value.unshift(newConversation)
       currentConversationId.value = newConversation.id
+      // saveConversations()
     }
 
     // 切换对话
@@ -61,6 +80,11 @@ export const useChatStore = defineStore(
     }
 
     // 添加消息到当前对话
+    // const addMessage = (message, chatId) => {
+      // const targetConv = conversations.value.find(c => c.id === chatId)
+
+      // if (targetConv.value) {
+      //   targetConv.value.messages.push({
     const addMessage = (message) => {
       if (currentConversation.value) {
         currentConversation.value.messages.push({
@@ -69,6 +93,7 @@ export const useChatStore = defineStore(
           ...message,
         })
       }
+      // saveConversations()
     }
 
     const setIsLoading = (value) => {
@@ -99,6 +124,7 @@ export const useChatStore = defineStore(
       if (conversation) {
         conversation.title = newTitle
       }
+      // saveConversations()
     }
 
     // 删除对话
@@ -113,7 +139,10 @@ export const useChatStore = defineStore(
           currentConversationId.value = conversations.value[0].id
         }
       }
+      // saveConversations()
     }
+
+
 
     return {
       conversations,

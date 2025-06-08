@@ -30,6 +30,7 @@ export const messageHandler = {
       const { done, value } = await reader.read()
       if (done) break
 
+      // 解析SSE格式的数据
       const chunk = decoder.decode(value)
       const lines = chunk.split('\n').filter((line) => line.trim() !== '')
 

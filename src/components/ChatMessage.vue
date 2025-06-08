@@ -12,7 +12,7 @@ import dislikeActiveIcon from '@/assets/photo/踩2.png'
 import regenerateIcon from '@/assets/photo/重新生成.png'
 import thinkingIcon from '@/assets/photo/深度思考.png'
 
-// 定义props
+// 定义props 接收父组件传入的属性
 const props = defineProps({
   message: {
     type: Object,
@@ -31,7 +31,7 @@ const isDisliked = ref(false)
 // 添加复制状态
 const isCopied = ref(false)
 
-// 添加重新生成的事件
+// 添加重新生成的事件 向父组件发送事件
 const emit = defineEmits(['regenerate'])
 
 // 添加展开/折叠状态控制
@@ -45,6 +45,7 @@ const toggleReasoning = () => {
 // 处理复制函数
 const handleCopy = async () => {
   try {
+    // navigator.clipboard.writeText(props.message.content) 将文本写入系统剪贴板
     await navigator.clipboard.writeText(props.message.content)
     isCopied.value = true
 
@@ -76,6 +77,7 @@ const handleRegenerate = () => {
 
 // 处理代码块的复制
 const handleCodeCopy = async (event) => {
+  // 向上查找离点击源最近的元素确保即使点击的是内部图标或按钮，也能找到整块代码容器
   const codeBlock = event.target.closest('.code-block')
   const code = codeBlock.querySelector('code').textContent
 
@@ -105,16 +107,26 @@ const handleThemeToggle = (event) => {
   //   darkIcon,
   //   isDark: codeBlock.classList.contains('dark-theme'),
   // })
-
+// 如果该类本来存在就移除，如果不存在就添加
   codeBlock.classList.toggle('dark-theme')
 
   // 切换图标
   themeIcon.src = codeBlock.classList.contains('dark-theme') ? lightIcon : darkIcon
+  // localStorage.setItem('codeBlockTheme', codeBlock.classList.contains('dark-theme') ? 'dark' : 'light')
 }
 
 // 修改事件监听的方式
 onMounted(() => {
-  // 使用 MutationObserver 来监听 DOM 变化
+  // const savedTheme = localStorage.getItem('codeBlockTheme')
+  // if (savedTheme === 'dark') {
+  //   document.querySelectorAll('.code-block').forEach(block => {
+  //     block.classList.add('dark-theme')
+  //     const themeIcon = block.querySelector('[data-action="theme"] img')
+  //     themeIcon.src = themeIcon.dataset.lightIcon;
+  //   })
+  // }
+
+  // 使用 MutationObserver 来监听 DOM 变化 动态地为新增的.code-block添加按钮监听器
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.addedNodes.length) {
@@ -143,6 +155,7 @@ onMounted(() => {
     subtree: true,
   })
 
+
   // 组件卸载时清理
   onUnmounted(() => {
     observer.disconnect()
@@ -155,7 +168,9 @@ onMounted(() => {
       themeBtn?.removeEventListener('click', handleThemeToggle)
     })
   })
+
 })
+
 
 // 将消息内容转换为 HTML
 const renderedContent = computed(() => {
