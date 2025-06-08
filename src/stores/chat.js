@@ -80,14 +80,10 @@ export const useChatStore = defineStore(
     }
 
     // 添加消息到当前对话
-    // const addMessage = (message, chatId) => {
-      // const targetConv = conversations.value.find(c => c.id === chatId)
-
-      // if (targetConv.value) {
-      //   targetConv.value.messages.push({
-    const addMessage = (message) => {
-      if (currentConversation.value) {
-        currentConversation.value.messages.push({
+    const addMessage = (message, chatId) => {
+      const target = conversations.value.find(c => c.id === chatId)
+      if (target) {
+        target.messages.push({
           id: Date.now(),
           timestamp: new Date().toISOString(),
           ...message,
@@ -100,10 +96,12 @@ export const useChatStore = defineStore(
       isLoading.value = value
     }
 
-    const updateLastMessage = (content, reasoning_content, completion_tokens, speed) => {
-      if (currentConversation.value?.messages.length > 0) {
+    const updateLastMessage = (content, reasoning_content, completion_tokens, speed, chatId) => {
+      const target = conversations.value.find(c => c.id === chatId)
+
+      if (target?.messages.length > 0) {
         const lastMessage =
-          currentConversation.value.messages[currentConversation.value.messages.length - 1]
+        target.messages[target.messages.length - 1]
         lastMessage.content = content
         lastMessage.reasoning_content = reasoning_content
         lastMessage.completion_tokens = completion_tokens
@@ -111,10 +109,15 @@ export const useChatStore = defineStore(
       }
     }
 
-    const getLastMessage = () => {
-      if (currentConversation.value?.messages.length > 0) {
-        return currentConversation.value.messages[currentConversation.value.messages.length - 1]
+    const getLastMessage = (chatId) => {
+      const target = conversations.value.find(c => c.id === chatId)
+
+      if (target?.messages.length > 0) {
+        return target.messages[target.messages.length - 1]
       }
+      // if (currentConversation.value?.messages.length > 0) {
+      //   return currentConversation.value.messages[currentConversation.value.messages.length - 1]
+      // }
       return null
     }
 

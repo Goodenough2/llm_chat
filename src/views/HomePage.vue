@@ -93,38 +93,38 @@ const handleTalk = async function(messageContent) {
   try {
     // 添加用户消息
     chatStore.addMessage(
-      messageHandler.formatMessage('user', messageContent.text, '', messageContent.files),
+      messageHandler.formatMessage('user', messageContent.text, '', messageContent.files), chatId,
     )
     // 添加空的助手消息
-    chatStore.addMessage(messageHandler.formatMessage('assistant', '', ''), )
+    chatStore.addMessage(messageHandler.formatMessage('assistant', '', ''), chatId)
 
     // 设置loading状态
     chatStore.setIsLoading(true)
-    const lastMessage = chatStore.getLastMessage()
+    const lastMessage = chatStore.getLastMessage(chatId)
     if (lastMessage) {
       lastMessage.loading = true
     }
 
     // 调用API获取回复
-    const messages = chatStore.currentMessages.map(({ role, content }) => ({ role, content }))
-    // const messages = (chatStore.conversations.find(c => c.id === chatId).value?.messages || []).map(
-      // ({ role, content }) => ({ role, content }));
+    // const messages = chatStore.currentMessages.map(({ role, content }) => ({ role, content }))
+    const conversation = chatStore.conversations.find(c => c.id === chatId)
+    const messages = (conversation?.messages || []).map(({ role, content }) => ({ role, content }))
     const response = await createChatCompletion(messages)
     // 使用封装的响应处理函数
     await messageHandler.handleResponse(
       response,
       settingStore.settings.stream,
       (content, reasoning_content, tokens, speed) => {
-        chatStore.updateLastMessage(content, reasoning_content, tokens, speed, )
+        chatStore.updateLastMessage(content, reasoning_content, tokens, speed, chatId)
       },
     )
     } catch (error) {
       console.error('Failed to send message:', error)
-      chatStore.updateLastMessage('抱歉，发生了一些错误，请稍后重试。')
+      chatStore.updateLastMessage('抱歉，发生了一些错误，请稍后重试。', null, null, null, chatId)
     } finally {
       // 重置loading状态
       chatStore.setIsLoading(false)
-      const lastMessage = chatStore.getLastMessage()
+      const lastMessage = chatStore.getLastMessage(chatId)
       if (lastMessage) {
         lastMessage.loading = false
       }
