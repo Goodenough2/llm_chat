@@ -6,7 +6,7 @@ export const useSettingStore = defineStore(
   () => {
     const settings = ref({
       model: 'deepseek-chat',
-      apiKey: 'sk-bc5caff85be64267bdb498d3f4d8dd21',
+      apiKey: '',
       stream: true,
       maxTokens: 4096,
       temperature: 0.7,
